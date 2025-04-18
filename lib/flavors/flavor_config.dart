@@ -1,4 +1,4 @@
-import 'package:my_book_store/flavor.dart';
+import 'package:my_book_store/flavors/flavor.dart';
 
 class FlavorConfig {
   // Singleton instance

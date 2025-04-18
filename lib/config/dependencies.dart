@@ -1,8 +1,15 @@
 import 'package:get_it/get_it.dart';
+import 'package:my_book_store/data/data.dart';
 import 'package:my_book_store/ui/ui.dart';
 
-injector() {
-  final GetIt getIt = GetIt.instance;
+final GetIt getIt = GetIt.instance;
 
-  getIt.registerSingleton(LoginBloc());
+void injector() {
+  getIt.registerSingleton<ApiService>(ApiService());
+
+  getIt.registerSingleton<StoreRepository>(
+    StoreRepository(getIt<ApiService>()),
+  );
+
+  getIt.registerSingleton<LoginBloc>(LoginBloc());
 }

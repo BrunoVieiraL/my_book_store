@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_book_store/flavor.dart';
+import 'package:my_book_store/flavors/flavor.dart';
 import 'package:my_book_store/ui/ui.dart';
-import 'package:my_book_store/utils/flavor_config.dart';
+import 'package:my_book_store/flavors/flavor_config.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
