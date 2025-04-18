@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "my_book_store QA (debug mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": ["--flavor", "qa", "--target", "lib/main_qa.dart"]
+        },
+        {
+            "name": "my_book_store Producao (debug mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": ["--flavor", "producao", "--target", "lib/main_producao.dart"]
+        },
+        {
+            "name": "my_book_store QA (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": ["--flavor", "qa", "--target", "lib/main_qa.dart"]
+        },
+        {
+            "name": "my_book_store Producao (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": ["--flavor", "producao", "--target", "lib/main_producao.dart"]
+        }
+    ]
+}
