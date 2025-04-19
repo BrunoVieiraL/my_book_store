@@ -1,7 +1,10 @@
+export 'cadastro_loja/bloc/cadastro_loja_bloc.dart';
+export 'cadastro_loja/widgets/cadastro_loja_screen.dart';
 export 'core/themes/colors.dart';
 export 'core/themes/theme.dart';
 export 'core/themes/typography.dart';
 export 'core/widgets/input_field.dart';
 export 'login/bloc/login_bloc.dart';
 export 'login/widgets/login_screen.dart';
+export 'my_app.dart';
 export 'splash/widgets/splash_screen.dart';

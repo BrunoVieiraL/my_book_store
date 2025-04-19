@@ -8,10 +8,12 @@ import 'flavors/flavor.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  injector();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   FlavorConfig.instance.init(Flavor.producao);
+
+  injector();
+
   runApp(const MyApp());
 }

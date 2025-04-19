@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:my_book_store/data/data.dart';
+import 'package:my_book_store/data/repositories/cadastro_loja_repository.dart';
 import 'package:my_book_store/ui/ui.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -11,5 +12,11 @@ void injector() {
     StoreRepository(getIt<ApiService>()),
   );
 
+  getIt.registerSingleton<CadastroLojaRepository>(
+    CadastroLojaRepository(getIt<ApiService>()),
+  );
+
   getIt.registerSingleton<LoginBloc>(LoginBloc());
+
+  getIt.registerSingleton<CadastroLojaBloc>(CadastroLojaBloc());
 }

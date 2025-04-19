@@ -11,32 +11,37 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loginBloc = GetIt.instance<LoginBloc>();
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: BlocBuilder<LoginBloc, AuthState>(
-            bloc: loginBloc,
-            builder: (context, state) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: BlocBuilder<LoginBloc, AuthState>(
+          bloc: loginBloc,
+          builder: (context, state) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  const SizedBox(height: 48),
                   Image.asset(
                     Assets.logoPupleWithText,
-                    cacheHeight: 145,
-                    cacheWidth: 132,
+                    width: 132,
+                    height: 145,
                     filterQuality: FilterQuality.high,
                   ),
+                  const SizedBox(height: 32),
                   InputField(
                     label: 'E-mail',
                     controller: loginBloc.emailTextController,
                     textInputType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
                   ),
+                  const SizedBox(height: 16),
                   InputField(
                     label: 'Senha',
                     controller: loginBloc.passwordTextController,
+                    textInputAction: TextInputAction.done,
                     errorText: state is AuthInvalidPasswordState
                         ? state.errorMessage
                         : null,
@@ -56,6 +61,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 32),
                   SizedBox(
                     width: double.infinity,
                     height: 64,
@@ -65,13 +71,21 @@ class LoginScreen extends StatelessWidget {
                       },
                       child: Text(
                         'Entrar',
-                        style: AppTypography.desktopLinkSmall,
+                        style: AppTypography.desktopLinkSmall.copyWith(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
+                  const SizedBox(height: 16),
                   TextButton(
-                    onPressed: () {
-                      // navegação
+                    onPressed: () async {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CadastroLojaScreen(),
+                        ),
+                      );
                     },
                     child: Text(
                       'Cadastre sua loja',
@@ -79,9 +93,9 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ],
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

@@ -12,6 +12,8 @@ class InputField extends StatelessWidget {
     this.obscureText = false,
     this.textInputType,
     this.errorText,
+    this.textInputAction,
+    this.focusNode,
   });
 
   final Widget? sufix;
@@ -20,15 +22,19 @@ class InputField extends StatelessWidget {
   final Function(String value)? onSubimitted;
   final bool obscureText;
   final TextInputType? textInputType;
+  final TextInputAction? textInputAction;
   final String? errorText;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      onSubmitted: onSubimitted,
       controller: controller,
+      focusNode: focusNode, // ✅ Adicionado
       obscureText: obscureText,
       keyboardType: textInputType,
+      textInputAction: textInputAction,
+      onSubmitted: onSubimitted,
       decoration: InputDecoration(
         suffix: sufix,
         labelText: label,
