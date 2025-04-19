@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:my_book_store/blocs/blocs.dart';
 import 'package:my_book_store/config/assets.dart';
+import 'package:my_book_store/ui/home/widgets/home_screen.dart';
 import 'package:my_book_store/ui/ui.dart';
 
 class CadastroLojaScreen extends StatelessWidget {
@@ -22,10 +23,12 @@ class CadastroLojaScreen extends StatelessWidget {
         }
 
         if (state is FormularioValido) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Formulário válido!')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomeScreen(),
+            ),
           );
-          //TODO: NAVIGATE TO HOME
         }
         return Scaffold(
           appBar: AppBar(

@@ -15,23 +15,33 @@ void main() {
     apiService = ApiService(dio: mockDio);
   });
 
-  test('deve retornar Response ao criar loja com sucesso', () async {
+  test('deve retornar AuthResponse ao criar loja com sucesso', () async {
     final store = Store(
       name: 'Loja Teste',
       slogan: 'Slogan',
       banner: 'bannerBase64',
-      admin: Admin(
-        name: 'Admin',
-        photo: 'photoBase64',
-        username: 'admin',
-        password: 'senha@123',
-      ),
     );
 
+    final user = User(
+      id: 1,
+      name: 'Julio Bitencourt',
+      username: 'julio.bitencourt',
+      password: '8ec4sJ7dx!*d',
+      photo: 'imageBase64',
+      isAdmin: true,
+    );
+
+    final expectedPayload = store.toJson()..['user'] = user.toJson();
+
     final fakeResponse = Response(
-      data: {'store': store.toJson()},
+      data: {
+        'refreshToken': 'tokenDeRefresh',
+        'token': 'tokenDeAcesso',
+        'store': store.toJson(),
+        'user': user.toJson()..addAll({'role': 'Admin'}),
+      },
       statusCode: 200,
-      requestOptions: RequestOptions(path: '/v1/store'),
+      requestOptions: RequestOptions(path: ''),
     );
 
     when(() => mockDio.post(
@@ -39,10 +49,17 @@ void main() {
           data: any(named: 'data'),
         )).thenAnswer((_) async => fakeResponse);
 
-    final result = await apiService.createStore(store);
+    final result = await apiService.createStore(
+      store: store,
+      user: user,
+    );
 
-    expect(result.statusCode, 200);
-    expect(result.data['store']['name'], equals('Loja Teste'));
-    verify(() => mockDio.post('/v1/store', data: store.toJson())).called(1);
+    expect(result, isA<AuthResponse>());
+    expect(result.store.name, equals('Loja Teste'));
+
+    verify(() => mockDio.post(
+          '/v1/store',
+          data: expectedPayload,
+        )).called(1);
   });
 }

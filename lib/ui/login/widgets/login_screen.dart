@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:my_book_store/blocs/blocs.dart';
 import 'package:my_book_store/config/assets.dart';
+import 'package:my_book_store/ui/home/widgets/home_screen.dart';
 import 'package:my_book_store/ui/ui.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -66,8 +67,16 @@ class LoginScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 64,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         loginBloc.add(SubmitLoginEvent());
+                        if (state is AuthSuccessState) {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HomeScreen(),
+                            ),
+                          );
+                        }
                       },
                       child: Text(
                         'Entrar',

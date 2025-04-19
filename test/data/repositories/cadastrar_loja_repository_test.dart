@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:my_book_store/data/repositories/cadastro_loja_repository.dart';
@@ -17,47 +16,42 @@ void main() {
   });
 
   group('CadastroLojaRepository', () {
-    test('deve retornar um Store ao cadastrar com sucesso', () async {
+    test('deve retornar um AuthResponse ao cadastrar loja com sucesso',
+        () async {
       final store = Store(
         name: 'Minha Lojinha',
         slogan: 'A melhor lojinha do sul do mundo!',
         banner: 'imageBase64',
-        admin: Admin(
-          name: 'Julio Bitencourt',
-          photo: 'imageBase64',
-          username: 'julio.bitencourt',
-          password: '8ec4sJ7dx!*d',
-        ),
+      );
+      final user = User(
+        id: 1,
+        name: 'Julio Bitencourt',
+        username: 'julio.bitencourt',
+        password: '8ec4sJ7dx!*d',
+        photo: 'imageBase64',
+        isAdmin: true,
       );
 
       final responseJson = {
         "refreshToken": "xxx",
-        "store": {
-          "banner": "imageBase64",
-          "id": 1,
-          "name": "Minha Lojinha",
-          "slogan": "A melhor lojinha do sul do mundo!"
-        },
-        "token": "xxx",
-        "user": {
-          "id": 1,
-          "name": "Julio Bitencourt",
-          "photo": "imageBase64",
-          "role": "Admin"
-        }
+        "token": "yyy",
+        "store": store.toJson(),
+        "user": user.toJson()
+          ..addAll(
+            {'role': 'Admin'},
+          ),
       };
 
-      when(() => mockApiService.createStore(store)).thenAnswer(
-        (_) async => Response(
-          requestOptions: RequestOptions(path: ''),
-          data: responseJson,
-        ),
+      when(() => mockApiService.createStore(store: store, user: user))
+          .thenAnswer(
+        (_) async => AuthResponse.fromJson(responseJson),
       );
 
-      final result = await repository.cadastrarLoja(store);
+      final result = await repository.cadastrarLoja(store, user);
 
-      expect(result, isNotNull);
-      expect(result.name, equals('Minha Lojinha'));
+      expect(result.store.name, equals('Minha Lojinha'));
+      expect(result.user.name, equals('Julio Bitencourt'));
+      expect(result.user.isAdmin, isTrue);
     });
   });
 }

@@ -40,4 +40,12 @@ abstract final class AppTypography {
     height: 0.26,
     letterSpacing: 0.75,
   );
+
+  static TextStyle mobileLinkLargeTight = GoogleFonts.poppins(
+    fontWeight: FontWeight.w600,
+    fontSize: 20,
+    height: 0.24,
+    letterSpacing: 0.75,
+    color: AppColors.grayscaleHeader,
+  );
 }

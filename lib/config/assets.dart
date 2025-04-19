@@ -4,4 +4,6 @@ abstract final class Assets {
 
   static const logoWhite = 'assets/logo/white.png';
   static const logoPurple = 'assets/logo/purple.png';
+
+  static const emptyBookCover = 'assets/empty_cover.png';
 }

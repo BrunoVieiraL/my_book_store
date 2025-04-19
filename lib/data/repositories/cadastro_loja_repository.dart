@@ -1,14 +1,17 @@
-import 'package:my_book_store/data/services/api_service.dart';
-import 'package:my_book_store/domain/models/store.dart';
+import 'package:my_book_store/data/data.dart';
+import 'package:my_book_store/domain/domain.dart';
 
 class CadastroLojaRepository {
   final ApiService _apiService;
 
   CadastroLojaRepository(this._apiService);
 
-  Future<Store> cadastrarLoja(Store store) async {
-    final response = await _apiService.createStore(store);
+  Future<AuthResponse> cadastrarLoja(Store store, User user) async {
+    final response = await _apiService.createStore(
+      store: store,
+      user: user,
+    );
 
-    return Store.fromJson(response.data['store']);
+    return response;
   }
 }
