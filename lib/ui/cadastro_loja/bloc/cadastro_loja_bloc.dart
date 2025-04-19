@@ -1,8 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_book_store/blocs/blocs.dart';
+import 'package:my_book_store/data/data.dart';
+import 'package:my_book_store/domain/domain.dart';
 
 class CadastroLojaBloc extends Bloc<CadastrarLojaEvent, CadastrarLojaState> {
+  final CadastroLojaRepository _cadastroLojaRepository;
   final nomeLojaTextController = TextEditingController();
   final sloganLojaTextController = TextEditingController();
   final bannerLojaTextController = TextEditingController();
@@ -16,7 +19,8 @@ class CadastroLojaBloc extends Bloc<CadastrarLojaEvent, CadastrarLojaState> {
   String _senha = '';
   String _confirmarSenha = '';
 
-  CadastroLojaBloc() : super(CadastrarLojaFormInitial()) {
+  CadastroLojaBloc(this._cadastroLojaRepository)
+      : super(CadastrarLojaFormInitial()) {
     on<SenhaChanged>((event, emit) {
       _senha = event.senha;
       _validarCampos(emit);
@@ -40,9 +44,25 @@ class CadastroLojaBloc extends Bloc<CadastrarLojaEvent, CadastrarLojaState> {
 
       emit(SubmissaoEmProgresso());
 
-      await Future.delayed(const Duration(seconds: 1)); // Simulação
+      emit(SubmissaoEmProgresso());
 
-      emit(FormularioValido());
+      try {
+        final response = await _cadastroLojaRepository.cadastrarLoja(
+          Store(
+            name: nomeLojaTextController.text,
+            slogan: sloganLojaTextController.text,
+            banner: bannerLojaTextController.text,
+          ),
+          User(
+            name: nomeAdminTextController.text,
+            username: nomeAdminTextController.text.toLowerCase(),
+            photo: '',
+          ),
+        ); // implemente isso
+        emit(CadastroSucesso(response));
+      } catch (e) {
+        emit(ErroAoCadastrar("Erro ao cadastrar loja: $e"));
+      }
     });
   }
 

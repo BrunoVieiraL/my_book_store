@@ -11,7 +11,15 @@ void injector() {
     CadastroLojaRepository(getIt<ApiService>()),
   );
 
-  getIt.registerSingleton<LoginBloc>(LoginBloc());
+  getIt.registerLazySingleton(
+    () => AuthRepository(getIt<ApiService>()),
+  );
 
-  getIt.registerSingleton<CadastroLojaBloc>(CadastroLojaBloc());
+  getIt.registerSingleton<LoginBloc>(
+    LoginBloc(getIt<AuthRepository>()),
+  );
+
+  getIt.registerSingleton<CadastroLojaBloc>(
+    CadastroLojaBloc(getIt<CadastroLojaRepository>()),
+  );
 }

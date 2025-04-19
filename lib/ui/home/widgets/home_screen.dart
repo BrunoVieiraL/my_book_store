@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:my_book_store/config/assets.dart';
+import 'package:my_book_store/domain/domain.dart';
 import 'package:my_book_store/ui/ui.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({
+    super.key,
+    required this.authResponse,
+  });
 
-  const HomeScreen({super.key});
+  final AuthResponse authResponse;
 
   @override
   Widget build(BuildContext context) {

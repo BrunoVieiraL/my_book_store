@@ -1,12 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:my_book_store/blocs/blocs.dart';
+import 'package:my_book_store/data/data.dart';
 import 'package:my_book_store/ui/ui.dart';
+
+class MockCadastroLojaRepository extends Mock
+    implements CadastroLojaRepository {}
 
 void main() {
   late CadastroLojaBloc bloc;
+  late CadastroLojaRepository cadastroLojaRepository;
 
   setUp(() {
-    bloc = CadastroLojaBloc();
+    cadastroLojaRepository = MockCadastroLojaRepository();
+    bloc = CadastroLojaBloc(cadastroLojaRepository);
   });
 
   group('CadastroLojaBloc', () {

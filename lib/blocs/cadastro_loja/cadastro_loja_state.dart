@@ -1,3 +1,5 @@
+import 'package:my_book_store/domain/domain.dart';
+
 abstract class CadastrarLojaState {}
 
 class CadastrarLojaFormInitial extends CadastrarLojaState {}
@@ -16,7 +18,14 @@ class FormularioValido extends CadastrarLojaState {}
 
 class SubmissaoEmProgresso extends CadastrarLojaState {}
 
-class ErroAoSubmeter extends CadastrarLojaState {
+class CadastroSucesso extends CadastrarLojaState {
+  final AuthResponse authResponse;
+
+  CadastroSucesso(this.authResponse);
+}
+
+class ErroAoCadastrar extends CadastrarLojaState {
   final String mensagem;
-  ErroAoSubmeter(this.mensagem);
+
+  ErroAoCadastrar(this.mensagem);
 }
