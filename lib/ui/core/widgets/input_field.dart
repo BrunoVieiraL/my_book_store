@@ -6,7 +6,8 @@ class InputField extends StatelessWidget {
   const InputField({
     super.key,
     this.sufix,
-    required this.label,
+    this.label,
+    this.hintText,
     required this.controller,
     this.onSubimitted,
     this.obscureText = false,
@@ -17,7 +18,8 @@ class InputField extends StatelessWidget {
   });
 
   final Widget? sufix;
-  final String label;
+  final String? label;
+  final String? hintText;
   final TextEditingController controller;
   final Function(String value)? onSubimitted;
   final bool obscureText;
@@ -30,7 +32,7 @@ class InputField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
-      focusNode: focusNode, // ✅ Adicionado
+      focusNode: focusNode,
       obscureText: obscureText,
       keyboardType: textInputType,
       textInputAction: textInputAction,
@@ -38,6 +40,7 @@ class InputField extends StatelessWidget {
       decoration: InputDecoration(
         suffix: sufix,
         labelText: label,
+        hintText: hintText,
         errorText: errorText,
         labelStyle: AppTypography.desktopTextXSmall,
         border: OutlineInputBorder(

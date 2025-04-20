@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:my_book_store/config/assets.dart';
 import 'package:my_book_store/domain/domain.dart';
 import 'package:my_book_store/ui/ui.dart';
@@ -13,23 +14,18 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final homeBloc = GetIt.instance<HomeBloc>();
+
+    final double width = MediaQuery.sizeOf(context).width;
+
     return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.bookmark), label: 'Salvos'),
-          NavigationDestination(icon: Icon(Icons.person), label: 'Perfil'),
-        ],
-        selectedIndex: 0,
-        onDestinationSelected: (index) {
-          // TODO: navegação entre abas
-        },
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            spacing: 8,
             children: [
               const SizedBox(height: 16),
               Row(
@@ -37,36 +33,56 @@ class HomeScreen extends StatelessWidget {
                   const Icon(Icons.menu_book, color: AppColors.primaryDefault),
                   const SizedBox(width: 8),
                   Text(
-                    'Olá,  👋', //TODO: ADD USER NAME
+                    'Olá, ${authResponse.user.name} 👋',
                     style: AppTypography.mobileDisplayMediumBold,
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Buscar',
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: const Icon(Icons.tune),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
+              Row(
+                children: [
+                  SizedBox(
+                    width: width * 0.70,
+                    height: 64,
+                    child: InputField(
+                      hintText: 'Buscar',
+                      controller: homeBloc.searchTextController,
+                      sufix: IconButton(
+                        onPressed: () async {
+                          //TODO: ADD SEARCH
+                        },
+                        icon: const Icon(
+                          Icons.search,
+                          color: AppColors.grayscaleLabel,
+                        ),
+                      ),
+                    ),
                   ),
-                  filled: true,
-                  fillColor: AppColors.grayscaleInput,
-                ),
+                  IconButton(
+                    onPressed: () async {
+                      await showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return HomeBottomSheet(homeBloc: homeBloc);
+                        },
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.tune,
+                      color: AppColors.grayscaleHeader,
+                    ),
+                  )
+                ],
               ),
               const SizedBox(height: 24),
               Text(
                 'Livros salvos',
                 style: AppTypography.mobileLinkLargeTight,
               ),
-              const SizedBox(height: 16),
               SizedBox(
                 height: 200,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  itemCount: 5, // mock
+                  itemCount: 5,
                   separatorBuilder: (_, __) => const SizedBox(width: 16),
                   itemBuilder: (context, index) {
                     return Image.asset(
@@ -81,7 +97,6 @@ class HomeScreen extends StatelessWidget {
                 'Todos os livros',
                 style: AppTypography.mobileLinkLargeTight,
               ),
-              const SizedBox(height: 16),
               GridView.builder(
                 itemCount: 8,
                 shrinkWrap: true,
@@ -93,9 +108,7 @@ class HomeScreen extends StatelessWidget {
                   mainAxisSpacing: 16,
                 ),
                 itemBuilder: (context, index) {
-                  return Image.asset(
-                    Assets.emptyBookCover,
-                  );
+                  return Image.asset(Assets.emptyBookCover);
                 },
               ),
               const SizedBox(height: 32),

@@ -22,7 +22,7 @@ class FlavorConfig {
       case Flavor.qa:
         return 'https://api-flutter-prova-qa.hml.sesisenai.org.br/';
       case Flavor.producao:
-        return ' https://api-flutter-prova.hml.sesisenai.org.br/';
+        return 'https://api-flutter-prova.hml.sesisenai.org.br/';
     }
   }
 }

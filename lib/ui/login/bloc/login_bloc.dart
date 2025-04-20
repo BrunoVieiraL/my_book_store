@@ -1,83 +1,37 @@
-import 'package:bloc/bloc.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_book_store/blocs/blocs.dart';
-import 'package:my_book_store/data/repositories/auth_repository.dart';
-import 'package:my_book_store/utils/validators.dart';
+import 'package:my_book_store/data/data.dart';
 
-class LoginBloc extends Bloc<AuthEvent, AuthState> {
-  final TextEditingController emailTextController = TextEditingController();
-  final TextEditingController passwordTextController = TextEditingController();
-
+class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AuthRepository _authRepository;
 
-  LoginBloc(this._authRepository)
-      : super(AuthInitialState(showPassword: true)) {
-    on<TooglePasswordVisibility>((event, emit) {
-      // Apenas reemite o mesmo tipo de estado atual com a flag invertida
-      emit(_copyWithNewShowPassword(state, !state.showPassword));
-    });
+  final usernameTextController = TextEditingController();
+  final passwordTextController = TextEditingController();
 
-    on<SubmitLoginEvent>((event, emit) async {
-      final username = emailTextController.text.trim();
-      final password = passwordTextController.text;
+  bool _showPassword = true;
 
-      if (!Validators.isPasswordValid(password)) {
-        emit(AuthInvalidPasswordState(
-          showPassword: state.showPassword,
-          errorMessage: 'Senha inválida. Verifique os requisitos.',
-        ));
-        return;
-      }
+  LoginBloc(
+    this._authRepository,
+  ) : super(LoginInitialState()) {
+    on<LoginPasswordToogleEvent>(
+      (event, emit) {
+        _showPassword = !_showPassword;
+        emit(LoginTooglePasswordState(_showPassword));
+      },
+    );
 
-      emit(AuthLoadingState(showPassword: state.showPassword));
-
+    on<LoginPressedEvent>((event, emit) async {
+      emit(LoginLoadingState());
       try {
-        final response = await _authRepository.login(
-          username: username,
-          password: password,
+        final authResponse = await _authRepository.login(
+          username: usernameTextController.text,
+          password: passwordTextController.text,
         );
-        emit(AuthLoggedInState(
-          showPassword: state.showPassword,
-          authResponse: response,
-        ));
+        emit(LoginSuccessState(authResponse));
       } catch (e) {
-        emit(AuthFailureState(
-          showPassword: state.showPassword,
-          errorMessage: 'Erro ao fazer login. Verifique suas credenciais.',
-        ));
+        emit(LoginErrorState(e.toString()));
       }
     });
-  }
-
-  AuthState _copyWithNewShowPassword(AuthState currentState, bool newValue) {
-    if (currentState is AuthInitialState) {
-      return AuthInitialState(showPassword: newValue);
-    } else if (currentState is AuthInvalidPasswordState) {
-      return AuthInvalidPasswordState(
-        showPassword: newValue,
-        errorMessage: currentState.errorMessage,
-      );
-    } else if (currentState is AuthLoadingState) {
-      return AuthLoadingState(showPassword: newValue);
-    } else if (currentState is AuthLoggedInState) {
-      return AuthLoggedInState(
-        showPassword: newValue,
-        authResponse: currentState.authResponse,
-      );
-    } else if (currentState is AuthFailureState) {
-      return AuthFailureState(
-        showPassword: newValue,
-        errorMessage: currentState.errorMessage,
-      );
-    } else {
-      return AuthInitialState(showPassword: newValue); // fallback
-    }
-  }
-
-  @override
-  Future<void> close() {
-    emailTextController.dispose();
-    passwordTextController.dispose();
-    return super.close();
   }
 }

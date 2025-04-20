@@ -27,9 +27,24 @@ abstract final class AppTypography {
     color: AppColors.grayscaleLabel,
   );
 
+  static TextStyle desktopLinkMediumTight = GoogleFonts.poppins(
+    fontWeight: FontWeight.w600,
+    fontSize: 18,
+    height: 0.24,
+    letterSpacing: 0.75,
+    color: AppColors.grayscaleBackground,
+  );
+
   static TextStyle mobileDisplayMediumBold = GoogleFonts.poppins(
     fontWeight: FontWeight.w700,
     fontSize: 24,
+    height: 0.32,
+    letterSpacing: 1,
+  );
+
+  static TextStyle mobileDisplaySmallBold = GoogleFonts.poppins(
+    fontWeight: FontWeight.w700,
+    fontSize: 20,
     height: 0.32,
     letterSpacing: 1,
   );

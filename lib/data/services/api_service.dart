@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:my_book_store/domain/domain.dart';
 import 'package:my_book_store/flavors/flavor_config.dart';
@@ -18,11 +20,17 @@ class ApiService {
     required String username,
     required String password,
   }) async {
-    final response = await _dio.post('/v1/auth', data: {
-      'user': username,
-      'password': password,
-    });
-    return AuthResponse.fromJson(response.data);
+    final response = await _dio.post(
+      '/v1/auth',
+      data: {
+        'user': username,
+        'password': password,
+      },
+      options: Options(
+        responseType: ResponseType.plain,
+      ),
+    );
+    return AuthResponse.fromJson(jsonDecode(response.data));
   }
 
   Future<Map<String, dynamic>> validateToken({
@@ -39,14 +47,29 @@ class ApiService {
     required Store store,
     required User user,
   }) async {
-    final payload = store.toJson()..['user'] = user.toJson();
-    final response = await _dio.post('/v1/store', data: payload);
-    return AuthResponse.fromJson(response.data);
+    try {
+      final payload = {
+        "name": store.name,
+        "slogan": store.slogan,
+        "banner": store.banner,
+        "admin": user.toJson(),
+      };
+      final response = await _dio.post(
+        '/v1/store',
+        data: payload,
+        options: Options(
+          responseType: ResponseType.plain,
+        ),
+      );
+      return AuthResponse.fromJson(jsonDecode(response.data));
+    } on DioException catch (e) {
+      throw Exception(e);
+    }
   }
 
   Future<Store> getStore({required int storeId}) async {
     final response = await _dio.get('/v1/store/$storeId');
-    return Store.fromJson(response.data);
+    return Store.fromJson(jsonDecode(response.data));
   }
 
   Future<void> updateStore({
@@ -56,16 +79,25 @@ class ApiService {
     await _dio.put('/v1/store/$storeId', data: store.toJson());
   }
 
-  Future<void> createEmployee(
-      {required int storeId, required User user}) async {
-    await _dio.post(
+  Future<User> createEmployee({
+    required int storeId,
+    required User user,
+    required String token,
+  }) async {
+    final response = await _dio.post(
       '/v1/store/$storeId/employee',
       data: user.toJson(),
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
+    User employee = User.fromJson(jsonDecode(response.data));
+
+    return employee;
   }
 
-  Future<List<User>> getEmployees({required int storeId}) async {
-    final response = await _dio.get('/v1/store/$storeId/employee');
+  Future<List<User>> getEmployees(
+      {required int storeId, required String token}) async {
+    final response = await _dio.get('/v1/store/$storeId/employee',
+        options: Options(headers: {'Authorization': 'Bearer $token'}));
     final list = response.data as List;
     return list.map((json) => User.fromJson(json)).toList();
   }
@@ -122,5 +154,15 @@ class ApiService {
     required int bookId,
   }) async {
     await _dio.delete('/v1/store/$storeId/book/$bookId');
+  }
+
+  Future<List<Book>> getBooks(Filter filter) async {
+    //TODO: not finalized
+    final response = await _dio.get('');
+    List<Book> books = [];
+    var list = response.data as List;
+    list.map((e) => books.add(Book.fromJson(e)));
+
+    return books;
   }
 }

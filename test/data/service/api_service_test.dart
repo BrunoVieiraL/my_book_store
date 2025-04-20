@@ -28,7 +28,6 @@ void main() {
       username: 'julio.bitencourt',
       password: '8ec4sJ7dx!*d',
       photo: 'imageBase64',
-      isAdmin: true,
     );
 
     final expectedPayload = store.toJson()..['user'] = user.toJson();
@@ -44,10 +43,11 @@ void main() {
       requestOptions: RequestOptions(path: ''),
     );
 
-    when(() => mockDio.post(
-          any(),
-          data: any(named: 'data'),
-        )).thenAnswer((_) async => fakeResponse);
+    when(() => mockDio.post(any(),
+        data: any(named: 'data'),
+        options: Options(
+          responseType: ResponseType.plain,
+        ))).thenAnswer((_) async => fakeResponse);
 
     final result = await apiService.createStore(
       store: store,

@@ -10,29 +10,24 @@ class CadastroLojaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cadastroLojaBloc = GetIt.instance<CadastroLojaBloc>();
+    final createStoreBloc = GetIt.instance<CreateStoreBloc>();
 
-    return BlocListener<CadastroLojaBloc, CadastrarLojaState>(
-      bloc: cadastroLojaBloc,
-      listener: (context, state) {
-        if (state is SenhaInvalida || state is ConfirmacaoIncorreta) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text((state as dynamic).mensagem)),
-          );
-        }
-
-        if (state is CadastroSucesso) {
-          Navigator.pushReplacement(
+    return BlocListener<CreateStoreBloc, CreateStoreState>(
+      bloc: createStoreBloc,
+      listener: (context, state) async {
+        if (state is CreateStoreSuccesState) {
+          await Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  HomeScreen(authResponse: state.authResponse),
+              builder: (context) => NavigationBarScreen(
+                authResponse: state.authResponse,
+              ),
             ),
           );
         }
       },
-      child: BlocBuilder<CadastroLojaBloc, CadastrarLojaState>(
-        bloc: cadastroLojaBloc,
+      child: BlocBuilder<CreateStoreBloc, CreateStoreState>(
+        bloc: createStoreBloc,
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
@@ -55,15 +50,19 @@ class CadastroLojaScreen extends StatelessWidget {
             ),
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  cadastroLojaBloc.add(SubmeterFormulario());
-                },
-                child: Text(
-                  'Salvar',
-                  style: AppTypography.desktopLinkSmall,
-                ),
-              ),
+              child: state is CreateStoreLoadingState
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : ElevatedButton(
+                      onPressed: () async {
+                        createStoreBloc.add(CreateStorePressedEvent());
+                      },
+                      child: Text(
+                        'Salvar',
+                        style: AppTypography.desktopLinkSmall,
+                      ),
+                    ),
             ),
             body: SafeArea(
               child: SingleChildScrollView(
@@ -80,49 +79,52 @@ class CadastroLojaScreen extends StatelessWidget {
                       ),
                       InputField(
                         label: 'Nome da Loja',
-                        controller: cadastroLojaBloc.nomeLojaTextController,
+                        controller: createStoreBloc.nameStoreTextController,
                         textInputAction: TextInputAction.next,
                       ),
                       InputField(
                         label: 'Slogan da Loja',
-                        controller: cadastroLojaBloc.sloganLojaTextController,
+                        controller: createStoreBloc.sloganStoreTextController,
                         textInputAction: TextInputAction.next,
                       ),
                       InputField(
                         label: 'Banner da Loja',
-                        controller: cadastroLojaBloc.bannerLojaTextController,
+                        controller: createStoreBloc.bannerStoreTextController,
                         textInputAction: TextInputAction.next,
                       ),
                       InputField(
                         label: 'Nome do Administrador',
-                        controller: cadastroLojaBloc.nomeAdminTextController,
+                        controller: createStoreBloc.adminTextController,
                         textInputAction: TextInputAction.next,
                       ),
                       InputField(
                         label: 'Senha',
-                        controller: cadastroLojaBloc.senhaTextController,
-                        focusNode: cadastroLojaBloc.senhaFocusNode,
+                        controller: createStoreBloc.passwordTextController,
                         textInputAction: TextInputAction.next,
-                        onSubimitted: (value) {
-                          cadastroLojaBloc.add(SenhaChanged(value));
-                          FocusScope.of(context).requestFocus(
-                              cadastroLojaBloc.repetirSenhaFocusNode);
-                        },
+                        obscureText: state is CreateStoreVisibilityState
+                            ? state.showPassword
+                            : false,
                         sufix: IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            createStoreBloc
+                                .add(CreateStoreTooglePasswordEvent());
+                          },
                           icon: const Icon(Icons.visibility),
                         ),
                       ),
                       InputField(
                         label: 'Repetir Senha',
-                        controller: cadastroLojaBloc.repetirSenhaTextController,
-                        focusNode: cadastroLojaBloc.repetirSenhaFocusNode,
+                        controller:
+                            createStoreBloc.passwordRepeatTextController,
                         textInputAction: TextInputAction.done,
-                        onSubimitted: (value) {
-                          cadastroLojaBloc.add(ConfirmarSenhaChanged(value));
-                        },
+                        obscureText: state is CreateStoreVisibilityState
+                            ? state.showRepeatPassword
+                            : false,
                         sufix: IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            createStoreBloc
+                                .add(CreateStoreToogleRepeatPasswordEvent());
+                          },
                           icon: const Icon(Icons.visibility),
                         ),
                       ),

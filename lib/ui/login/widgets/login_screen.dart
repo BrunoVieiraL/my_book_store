@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:my_book_store/blocs/blocs.dart';
+import 'package:my_book_store/blocs/login/login_event.dart';
+import 'package:my_book_store/blocs/login/login_state.dart';
 import 'package:my_book_store/config/assets.dart';
 import 'package:my_book_store/ui/ui.dart';
 
@@ -15,20 +16,21 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: BlocListener<LoginBloc, AuthState>(
+        child: BlocListener<LoginBloc, LoginState>(
           bloc: loginBloc,
-          listener: (context, state) {
-            if (state is AuthLoggedInState) {
-              Navigator.push(
+          listener: (context, state) async {
+            if (state is LoginSuccessState) {
+              await Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      HomeScreen(authResponse: state.authResponse),
+                  builder: (context) => NavigationBarScreen(
+                    authResponse: state.authResponse,
+                  ),
                 ),
               );
             }
           },
-          child: BlocBuilder<LoginBloc, AuthState>(
+          child: BlocBuilder<LoginBloc, LoginState>(
             bloc: loginBloc,
             builder: (context, state) {
               return SingleChildScrollView(
@@ -46,7 +48,7 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(height: 32),
                     InputField(
                       label: 'E-mail',
-                      controller: loginBloc.emailTextController,
+                      controller: loginBloc.usernameTextController,
                       textInputType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                     ),
@@ -55,20 +57,21 @@ class LoginScreen extends StatelessWidget {
                       label: 'Senha',
                       controller: loginBloc.passwordTextController,
                       textInputAction: TextInputAction.done,
-                      errorText: state is AuthInvalidPasswordState
-                          ? state.errorMessage
-                          : null,
-                      obscureText: state.showPassword,
-                      onSubimitted: (value) {
-                        loginBloc.add(SubmitLoginEvent());
-                      },
+                      errorText:
+                          state is LoginErrorState ? state.errorMessage : null,
+                      obscureText: state is LoginTooglePasswordState
+                          ? state.showPassword
+                          : false,
+                      onSubimitted: (value) {},
                       sufix: IconButton(
                         onPressed: () {
-                          loginBloc.add(TooglePasswordVisibility());
+                          loginBloc.add(LoginPasswordToogleEvent());
                         },
                         icon: Icon(
-                          state.showPassword
-                              ? Icons.visibility
+                          state is LoginTooglePasswordState
+                              ? state.showPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility
                               : Icons.visibility_off,
                           color: AppColors.grayscaleHeader,
                         ),
@@ -78,11 +81,11 @@ class LoginScreen extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       height: 64,
-                      child: state is AuthLoadingState
+                      child: state is LoginLoadingState
                           ? const Center(child: CircularProgressIndicator())
                           : ElevatedButton(
                               onPressed: () async {
-                                loginBloc.add(SubmitLoginEvent());
+                                loginBloc.add(LoginPressedEvent());
                               },
                               child: Text(
                                 'Entrar',
